@@ -72,9 +72,9 @@ func Solution(){
     directions := []direction{{1, 0}, {0, 1}, {1, 1}, {1, -1}}
     table := initialiseTable()
     max_prod := 0
-    for row_ind, _ := range table{
-        // for col_ind, _ := range row{
-        for col_ind := 0; col_ind <= 19; col_ind++{
+    // for row_ind, _ := range table{
+    for row_ind := 0; row_ind <= 16; row_ind++{
+        for col_ind := 0; col_ind <= 16; col_ind++{
             for _, dir := range directions{
                 pr := get_direction_product(dir, cell{row_ind: row_ind, col_ind: col_ind}, table)
                 max_prod = max(max_prod, pr)
