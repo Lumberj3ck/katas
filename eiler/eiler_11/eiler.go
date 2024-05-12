@@ -69,30 +69,16 @@ func get_direction_product(dir direction, current_cell cell, table [][]int) (int
 
 
 func Solution(){
-    directions := []direction{{1, 0}, {0, 1}, {1, 1}, {-1, 1}}
+    directions := []direction{{1, 0}, {0, 1}, {1, 1}, {1, -1}}
     table := initialiseTable()
     max_prod := 0
-    for row_ind, row := range table{
-        for col_ind, _ := range row{
+    for row_ind, _ := range table{
+        // for col_ind, _ := range row{
+        for col_ind := 0; col_ind <= 19; col_ind++{
             for _, dir := range directions{
                 pr := get_direction_product(dir, cell{row_ind: row_ind, col_ind: col_ind}, table)
                 max_prod = max(max_prod, pr)
             }
-            // if row_ind + 4 <= 19{ product_bellow, _ := get_product_bellow(table, cell{row_ind: row_ind, col_ind: col_ind})
-            //     max_prod = max(max_prod, product_bellow)
-            // }
-            // if col_ind + 4 <= 19{
-            //     product_right, _ := get_product_right(table, cell{row_ind: row_ind, col_ind: col_ind})
-            //     max_prod = max(max_prod, product_right)
-            // }
-            // if row_ind + 4 <= 19 && col_ind + 4 <= 19{
-            //     product_diagonal, _ := get_product_diagonal(table, cell{row_ind: row_ind, col_ind: col_ind})
-            //     max_prod = max(max_prod, product_diagonal)
-            // }
-            // if row_ind - 4 >= 0 && col_ind + 4 <= 19{
-            //     product_upper_diagonal, _ := get_product_upper_diagonal(table, cell{row_ind: row_ind, col_ind: col_ind})
-            //     max_prod = max(max_prod, product_upper_diagonal)
-            // }
         }
     }
     fmt.Println(max_prod)
