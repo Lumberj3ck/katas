@@ -28,58 +28,71 @@ func initialiseTable() [][]int{
 
 type cell struct{
     row_ind int
-    kol_ind int
+    col_ind int
 }
 
 func get_product_bellow(table [][]int, current_cell cell) (int, string){
-    return table[current_cell.row_ind][current_cell.kol_ind] * table[current_cell.row_ind + 1][current_cell.kol_ind] * table[current_cell.row_ind + 2][current_cell.kol_ind] * table[current_cell.row_ind + 3][current_cell.kol_ind], "Bellow"
+    return table[current_cell.row_ind][current_cell.col_ind] * table[current_cell.row_ind + 1][current_cell.col_ind] * table[current_cell.row_ind + 2][current_cell.col_ind] * table[current_cell.row_ind + 3][current_cell.col_ind], "Bellow"
 }
 
 func get_product_right(table [][]int, current_cell cell) (int, string){
-    return table[current_cell.row_ind][current_cell.kol_ind] * table[current_cell.row_ind][current_cell.kol_ind + 1] * table[current_cell.row_ind][current_cell.kol_ind + 2] * table[current_cell.row_ind][current_cell.kol_ind + 3], "Right"
+    return table[current_cell.row_ind][current_cell.col_ind] * table[current_cell.row_ind][current_cell.col_ind + 1] * table[current_cell.row_ind][current_cell.col_ind + 2] * table[current_cell.row_ind][current_cell.col_ind + 3], "Right"
 }
 func get_product_diagonal(table [][]int, current_cell cell) (int, string){
-    return table[current_cell.row_ind][current_cell.kol_ind] * table[current_cell.row_ind + 1][current_cell.kol_ind + 1] * table[current_cell.row_ind + 2][current_cell.kol_ind + 2] * table[current_cell.row_ind + 3][current_cell.kol_ind + 3], "Diagonal"
+    return table[current_cell.row_ind][current_cell.col_ind] * table[current_cell.row_ind + 1][current_cell.col_ind + 1] * table[current_cell.row_ind + 2][current_cell.col_ind + 2] * table[current_cell.row_ind + 3][current_cell.col_ind + 3], "Diagonal"
 }
 func get_product_upper_diagonal(table [][]int, current_cell cell) (int, string){
-    return table[current_cell.row_ind][current_cell.kol_ind] * table[current_cell.row_ind - 1][current_cell.kol_ind + 1] * table[current_cell.row_ind - 2][current_cell.kol_ind + 2] * table[current_cell.row_ind - 3][current_cell.kol_ind + 3], "Upper Diagonal"
+    return table[current_cell.row_ind][current_cell.col_ind] * table[current_cell.row_ind - 1][current_cell.col_ind + 1] * table[current_cell.row_ind - 2][current_cell.col_ind + 2] * table[current_cell.row_ind - 3][current_cell.col_ind + 3], "Upper Diagonal"
+}
+
+type direction struct{
+    rowInd, colInd int
+}
+
+func get_direction_product(dir direction, current_cell cell, table [][]int) (int){
+    product := 1
+    valid := true
+    for i := 0; i < 4; i++{
+        newRow, newCol := current_cell.row_ind+i*dir.rowInd, current_cell.col_ind+i*dir.colInd
+        if newRow < 0 || newRow >= len(table) || newCol < 0 || newCol >= len(table[0]) {
+            valid = false
+            break
+        }
+        product *= table[newRow][newCol]
+    }
+    if !valid{
+        return 0
+    }
+    return product
 }
 
 
 
 func Solution(){
+    directions := []direction{{1, 0}, {0, 1}, {1, 1}, {-1, 1}}
     table := initialiseTable()
     max_prod := 0
     for row_ind, row := range table{
-        for kol_ind, _ := range row{
-            if row_ind + 4 <= 19{
-                product_bellow, where := get_product_bellow(table, cell{row_ind: row_ind, kol_ind: kol_ind})
-                if max_prod < product_bellow{
-                    max_prod = max(max_prod, product_bellow)
-                    fmt.Println(where, product_bellow, row_ind, kol_ind)
-                }
+        for col_ind, _ := range row{
+            for _, dir := range directions{
+                pr := get_direction_product(dir, cell{row_ind: row_ind, col_ind: col_ind}, table)
+                max_prod = max(max_prod, pr)
             }
-            if kol_ind + 4 <= 19{
-                product_right, where := get_product_right(table, cell{row_ind: row_ind, kol_ind: kol_ind})
-                if max_prod < product_right{
-                    max_prod = max(max_prod, product_right)
-                    fmt.Println(where, product_right, row_ind, kol_ind)
-                }
-            }
-            if row_ind + 4 <= 19 && kol_ind + 4 <= 19{
-                product_diagonal, where := get_product_diagonal(table, cell{row_ind: row_ind, kol_ind: kol_ind})
-                if max_prod < product_diagonal{
-                    fmt.Println(where, product_diagonal)
-                    max_prod = max(max_prod, product_diagonal)
-                }
-            }
-            if row_ind - 4 >= 0 && kol_ind + 4 <= 19{
-                product_upper_diagonal, where := get_product_upper_diagonal(table, cell{row_ind: row_ind, kol_ind: kol_ind})
-                if max_prod < product_upper_diagonal{
-                    fmt.Println(where, product_upper_diagonal, row_ind, kol_ind)
-                    max_prod = max(max_prod, product_upper_diagonal)
-                }
-            }
+            // if row_ind + 4 <= 19{ product_bellow, _ := get_product_bellow(table, cell{row_ind: row_ind, col_ind: col_ind})
+            //     max_prod = max(max_prod, product_bellow)
+            // }
+            // if col_ind + 4 <= 19{
+            //     product_right, _ := get_product_right(table, cell{row_ind: row_ind, col_ind: col_ind})
+            //     max_prod = max(max_prod, product_right)
+            // }
+            // if row_ind + 4 <= 19 && col_ind + 4 <= 19{
+            //     product_diagonal, _ := get_product_diagonal(table, cell{row_ind: row_ind, col_ind: col_ind})
+            //     max_prod = max(max_prod, product_diagonal)
+            // }
+            // if row_ind - 4 >= 0 && col_ind + 4 <= 19{
+            //     product_upper_diagonal, _ := get_product_upper_diagonal(table, cell{row_ind: row_ind, col_ind: col_ind})
+            //     max_prod = max(max_prod, product_upper_diagonal)
+            // }
         }
     }
     fmt.Println(max_prod)
